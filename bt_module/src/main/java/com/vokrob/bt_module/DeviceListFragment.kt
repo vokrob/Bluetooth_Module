@@ -19,7 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.vokrob.bt_module.databinding.FragmentListBinding
 
 
-class DeviceListFragment : Fragment() {
+class DeviceListFragment : Fragment(), ItemAdapter.Listener {
     private lateinit var itemAdapter: ItemAdapter
     private var bAdapter: BluetoothAdapter? = null
     private lateinit var binding: FragmentListBinding
@@ -49,7 +49,7 @@ class DeviceListFragment : Fragment() {
 
     private fun initRcViews() = with(binding) {
         rcViewPaired.layoutManager = LinearLayoutManager(requireContext())
-        itemAdapter = ItemAdapter()
+        itemAdapter = ItemAdapter(this@DeviceListFragment)
         rcViewPaired.adapter = itemAdapter
     }
 
@@ -62,7 +62,8 @@ class DeviceListFragment : Fragment() {
                 list.add(
                     ListItem(
                         it.name,
-                        it.address
+                        it.address,
+                        false
                     )
                 )
             }
@@ -95,6 +96,10 @@ class DeviceListFragment : Fragment() {
                 Snackbar.make(binding.root, R.string.bluetooth_off, Snackbar.LENGTH_LONG).show()
             }
         }
+    }
+
+    override fun onClick(device: ListItem) {
+
     }
 }
 
