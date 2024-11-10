@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,8 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.vokrob.bt_module.databinding.FragmentListBinding
 
-
 class DeviceListFragment : Fragment(), ItemAdapter.Listener {
+    private var preferences: SharedPreferences? = null
     private lateinit var itemAdapter: ItemAdapter
     private var bAdapter: BluetoothAdapter? = null
     private lateinit var binding: FragmentListBinding
@@ -37,6 +38,8 @@ class DeviceListFragment : Fragment(), ItemAdapter.Listener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        preferences =
+            activity?.getSharedPreferences(BluetoothConstants.PREFERENCES, Context.MODE_PRIVATE)
         binding.imBluetoothOn.setOnClickListener {
             btLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
@@ -63,7 +66,7 @@ class DeviceListFragment : Fragment(), ItemAdapter.Listener {
                     ListItem(
                         it.name,
                         it.address,
-                        false
+                        preferences?.getString(BluetoothConstants.MAC, "") == it.address
                     )
                 )
             }
@@ -98,8 +101,14 @@ class DeviceListFragment : Fragment(), ItemAdapter.Listener {
         }
     }
 
-    override fun onClick(device: ListItem) {
+    private fun saveMac(mac: String) {
+        val editor = preferences?.edit()
+        editor?.putString(BluetoothConstants.MAC, mac)
+        editor?.apply()
+    }
 
+    override fun onClick(device: ListItem) {
+        saveMac(device.mac)
     }
 }
 

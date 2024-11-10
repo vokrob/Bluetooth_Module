@@ -36,6 +36,8 @@ class ItemAdapter(private val listener: Listener) :
             device = item
             name.text = item.name
             mac.text = item.mac
+
+            if (item.isChecked) adapter.selectCheckBox(checkBox)
         }
     }
 
