@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +26,7 @@ class DeviceListFragment : Fragment(), ItemAdapter.Listener {
     private var bAdapter: BluetoothAdapter? = null
     private lateinit var binding: FragmentListBinding
     private lateinit var btLauncher: ActivityResultLauncher<Intent>
+    private lateinit var pLauncher: ActivityResultLauncher<Array<String>>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,6 +46,7 @@ class DeviceListFragment : Fragment(), ItemAdapter.Listener {
             btLauncher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
 
+        checkPermissions()
         initRcViews()
         registerBtLauncher()
         initBtAdapter()
@@ -99,6 +102,32 @@ class DeviceListFragment : Fragment(), ItemAdapter.Listener {
                 Snackbar.make(binding.root, R.string.bluetooth_off, Snackbar.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun checkPermissions() {
+        if (!checkBtPermissions()) {
+            registerPermissionListener()
+            launchBtPermissions()
+        }
+    }
+
+    private fun launchBtPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pLauncher.launch(
+                arrayOf(
+                    android.Manifest.permission.BLUETOOTH_CONNECT,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION
+                )
+            )
+        } else {
+            pLauncher.launch(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION))
+        }
+    }
+
+    private fun registerPermissionListener() {
+        pLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            }
     }
 
     private fun saveMac(mac: String) {
