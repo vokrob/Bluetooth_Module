@@ -1,7 +1,8 @@
 package com.vokrob.bt_module
 
+import android.bluetooth.BluetoothDevice
+
 data class ListItem(
-    val name: String,
-    val mac: String,
+    val device: BluetoothDevice,
     val isChecked: Boolean
 )

@@ -25,6 +25,7 @@ import com.vokrob.bt_module.databinding.FragmentListBinding
 class DeviceListFragment : androidx.fragment.app.Fragment(), ItemAdapter.Listener {
     private var preferences: SharedPreferences? = null
     private lateinit var itemAdapter: ItemAdapter
+    private lateinit var discoveryAdapter: ItemAdapter
     private var bAdapter: BluetoothAdapter? = null
     private lateinit var binding: FragmentListBinding
     private lateinit var btLauncher: ActivityResultLauncher<Intent>
@@ -65,8 +66,13 @@ class DeviceListFragment : androidx.fragment.app.Fragment(), ItemAdapter.Listene
 
     private fun initRcViews() = with(binding) {
         rcViewPaired.layoutManager = LinearLayoutManager(requireContext())
+        rcViewSearch.layoutManager = LinearLayoutManager(requireContext())
+
         itemAdapter = ItemAdapter(this@DeviceListFragment)
+        discoveryAdapter = ItemAdapter(this@DeviceListFragment)
+
         rcViewPaired.adapter = itemAdapter
+        rcViewSearch.adapter = discoveryAdapter
     }
 
     private fun getPairedDevices() {
@@ -77,8 +83,7 @@ class DeviceListFragment : androidx.fragment.app.Fragment(), ItemAdapter.Listene
             deviceList.forEach {
                 list.add(
                     ListItem(
-                        it.name,
-                        it.address,
+                        it,
                         preferences?.getString(BluetoothConstants.MAC, "") == it.address
                     )
                 )
@@ -146,8 +151,8 @@ class DeviceListFragment : androidx.fragment.app.Fragment(), ItemAdapter.Listene
         editor?.apply()
     }
 
-    override fun onClick(device: ListItem) {
-        saveMac(device.mac)
+    override fun onClick(item: ListItem) {
+        saveMac(item.device.address)
     }
 
     private val bReceiver = object : BroadcastReceiver() {
@@ -155,6 +160,11 @@ class DeviceListFragment : androidx.fragment.app.Fragment(), ItemAdapter.Listene
             if (intent?.action == BluetoothDevice.ACTION_FOUND) {
                 val device =
                     intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+                val list = mutableSetOf<ListItem>()
+                list.addAll(discoveryAdapter.currentList)
+                if (device != null) list.add(ListItem(device, false))
+                discoveryAdapter.submitList(list.toList())
+
                 try {
                     Log.d("MyLog", "Device: ${device?.name}")
                 } catch (e: SecurityException) {
