@@ -51,7 +51,11 @@ class DeviceListFragment : androidx.fragment.app.Fragment(), ItemAdapter.Listene
 
         binding.imBluetoothSearch.setOnClickListener {
             try {
-                bAdapter?.startDiscovery()
+                if (bAdapter?.isEnabled == true) {
+                    bAdapter?.startDiscovery()
+                    it.visibility = View.GONE
+                    binding.pbSearch.visibility = View.VISIBLE
+                }
             } catch (e: SecurityException) {
             }
         }
@@ -173,6 +177,8 @@ class DeviceListFragment : androidx.fragment.app.Fragment(), ItemAdapter.Listene
             } else if (intent?.action == BluetoothDevice.ACTION_BOND_STATE_CHANGED) {
                 getPairedDevices()
             } else if (intent?.action == BluetoothAdapter.ACTION_DISCOVERY_FINISHED) {
+                binding.imBluetoothSearch.visibility = View.VISIBLE
+                binding.pbSearch.visibility = View.GONE
             }
         }
     }

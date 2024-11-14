@@ -71,6 +71,13 @@
                 android:text="@string/search_devices"
                 android:textColor="@color/blue" />
 
+            <ProgressBar
+                android:id="@+id/pbSearch"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:visibility="gone" />
+
             <ImageButton
                 android:id="@+id/imBluetoothSearch"
                 android:layout_width="wrap_content"
