@@ -27,5 +27,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/bConnect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Connect"
+        app:layout_constraintBottom_toTopOf="@+id/bList"
+        app:layout_constraintEnd_toEndOf="@+id/bList"
+        app:layout_constraintStart_toStartOf="@+id/bList" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
