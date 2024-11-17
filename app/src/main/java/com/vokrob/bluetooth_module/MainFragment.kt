@@ -42,6 +42,9 @@ class MainFragment : Fragment(), BluetoothController.Listener {
         binding.bConnect.setOnClickListener {
             bluetoothController.connect(mac ?: "", this)
         }
+        binding.bSend.setOnClickListener {
+            bluetoothController.sendMessage("A")
+        }
     }
 
     private fun initBtAdapter() {
@@ -69,6 +72,7 @@ class MainFragment : Fragment(), BluetoothController.Listener {
                 }
 
                 else -> {
+                    binding.tvStatus.text = message
                 }
             }
         }
